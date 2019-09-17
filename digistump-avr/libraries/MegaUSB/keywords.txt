@@ -1,0 +1,5 @@
+Mega2USB	KEYWORD1
+update KEYWORD2
+setup KEYWORD2
+delay KEYWORD2
+setButtons KEYWORD2
