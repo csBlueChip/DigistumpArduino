@@ -55,10 +55,19 @@
 //----------------------------------------------------------------------------- ----------------------------------------
 // Great tutorial:
 //   https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors/
+// How to decipher the manual:
+//   https://electronics.stackexchange.com/questions/68141/where-do-i-lookup-values-for-building-a-usb-hid-descriptor
+// Official HID documentation:
+//   https://www.usb.org/sites/default/files/documents/hut1_12v2.pdf
 // Info about V-USB hardware:
 //   http://eleccelerator.com/usnoobie/
+// Obdev's official repo:
+//   https://github.com/obdev/v-usb/tree/master/usbdrv
 // Handy tool:
 //   https://www.usb.org/document-library/hid-descriptor-tool
+// O/T: 1-pin UART debugging:
+//   https://digistump.com/wiki/digispark/tutorials/debugging
+//
 // IF you change the following descriptor
 // ...you MUST patch up USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH in usbconfig.h 
 // ...I'm gonna go ahead and assume there's a good reason for that!
