@@ -9,15 +9,11 @@
 #if   (COMPILE == FOR_DEBUG)
 #   include <DigiCDC.h>
 #   define DELAY(ms)  SerialUSB.delay(ms)
-//#   ifdef F  // For some reason I haven't found, F() will not play ball! >:-/
-//#     undef F
-//#   endif
-//#   define  F(s)  s
 
 #elif (COMPILE == FOR_MD)
 #   include "Mega2USB.h"
 #   define DELAY(ms)   Mega2USB.delay(ms)
-#   define REFRESH_HZ  (50)
+#   define REFRESH_HZ  (60)
 
 #else
 #   error Unknown COMPILE method!
@@ -26,38 +22,46 @@
 //-------------------------------------------------------------------------------
 // ATTiny167 wiring
 //
-#define  C_CNT       (2)      // Number of supported controllers
+#define  C_CNT    (2)      // Number of supported controllers
 
-#define  CX_P7       (8)      // [output] : Clock/Select
-#define  C_CLK       (CX_P7)  // Pseudonyms
-#define  C_SEL       (CX_P7)
+#define  CX_P7    (8)      // [output] : Clock/Select
+#define  C_CLK    (CX_P7)  // Pseudonyms
+#define  C_SEL    (CX_P7)
 
-#define  C1_P1       (0 )     // [input] Controller-1/Pin-1  -->  GPIO_D0
-#define  C1_P2       (1 )     // [input] Controller-1/Pin-2  -->  GPIO_D1
-#define  C1_P3       (2 )     // [input] Controller-1/Pin-3  -->  GPIO_D2
-#define  C1_P4       (7 )     // [input] Controller-1/Pin-4  -->  GPIO_D7
-#define  C1_P69      (A6)     // [input] Controller-1/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A6
+# define  C1_P1   (0 )     // [input] Controller-1/Pin-1  -->  GPIO_D0
+# define  C1_P2   (1 )     // [input] Controller-1/Pin-2  -->  GPIO_D1
+# define  C1_P3   (2 )     // [input] Controller-1/Pin-3  -->  GPIO_D2
+# define  C1_P4   (7 )     // [input] Controller-1/Pin-4  -->  GPIO_D7
+# define  C1_P69  (A6)     // [input] Controller-1/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A6
 
-#define  C2_P1       (9 )     // [input] Controller-2/Pin-1  -->  GPIO_D9
-#define  C2_P2       (10)     // [input] Controller-2/Pin-2  -->  GPIO_D10
-#define  C2_P3       (11)     // [input] Controller-2/Pin-3  -->  GPIO_D11
-#define  C2_P4       (12)     // [input] Controller-2/Pin-4  -->  GPIO_D12
-#define  C2_P69      (A5)     // [input] Controller-2/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A5
+#if (C_CNT >= 2)
+# define  C2_P1   (9 )     // [input] Controller-2/Pin-1  -->  GPIO_D9
+# define  C2_P2   (10)     // [input] Controller-2/Pin-2  -->  GPIO_D10
+# define  C2_P3   (11)     // [input] Controller-2/Pin-3  -->  GPIO_D11
+# define  C2_P4   (12)     // [input] Controller-2/Pin-4  -->  GPIO_D12
+# define  C2_P69  (A5)     // [input] Controller-2/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A5
+#endif
 
-#if (C_CNT > 2)
-# error No pins defined for controllers 3 or 4
+#if (C_CNT >= 3)
+# error No pins defined for controller 3
+# define  C3_P1   (? )     // [input] Controller-3/Pin-1  -->  GPIO_D?
+# define  C3_P2   (? )     // [input] Controller-3/Pin-2  -->  GPIO_D?
+# define  C3_P3   (? )     // [input] Controller-3/Pin-3  -->  GPIO_D?
+# define  C3_P4   (? )     // [input] Controller-3/Pin-4  -->  GPIO_D?
+# define  C3_P69  (? )     // [input] Controller-3/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A?
+#endif
 
-# define  C3_P1      (? )     // [input] Controller-3/Pin-1  -->  GPIO_D?
-# define  C3_P2      (? )     // [input] Controller-3/Pin-2  -->  GPIO_D?
-# define  C3_P3      (? )     // [input] Controller-3/Pin-3  -->  GPIO_D?
-# define  C3_P4      (? )     // [input] Controller-3/Pin-4  -->  GPIO_D?
-# define  C3_P69     (? )     // [input] Controller-3/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A?
+#if (C_CNT == 4)
+# error No pins defined for controller 4
+# define  C4_P1   (? )     // [input] Controller-4/Pin-1  -->  GPIO_D?
+# define  C4_P2   (? )     // [input] Controller-4/Pin-2  -->  GPIO_D?
+# define  C4_P3   (? )     // [input] Controller-4/Pin-3  -->  GPIO_D?
+# define  C4_P4   (? )     // [input] Controller-4/Pin-4  -->  GPIO_D?
+# define  C4_P69  (? )     // [input] Controller-4/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A?
+#endif
 
-# define  C4_P1      (? )     // [input] Controller-4/Pin-1  -->  GPIO_D?
-# define  C4_P2      (? )     // [input] Controller-4/Pin-2  -->  GPIO_D?
-# define  C4_P3      (? )     // [input] Controller-4/Pin-3  -->  GPIO_D?
-# define  C4_P4      (? )     // [input] Controller-4/Pin-4  -->  GPIO_D?
-# define  C4_P69     (? )     // [input] Controller-4/Pins-{6,9}  -->  Resistor Network  -->  GPIO_A?
+#if (C_CNT > 4)
+# error MegaDrive supports a maximum of 4 controllers
 #endif
 
 //-------------------------------------------------------------------------------
@@ -101,7 +105,7 @@
                           DIF(CX_P6, CX_P69)),\
                       DIF(CX_P9, CX_P69))
 
-// The maximum deviation (caused by eg. resistor tolerances, wiring defects, RF inteference, etc.)
+// The maximum deviation allowed (caused by eg. resistor tolerances, wiring defects, RF inteference, etc.)
 #define  DEV      ((DIF_MIN & ~1) / 2)
 
 // Lowest and highest readings for a give pin (combo)
@@ -139,54 +143,13 @@
 #define  BM     (0x0800)  // Mode
 
 //-------------------------------------------------------------------------------
-// All Possible events
-//   Format : 0x 000'TF'BBb
-//   0   = Unused
-//   T   = Event Type    -> 1:Connection, 2:Button
-//   F   = Event Feature -> (T==Connection) -> 1:Add  , 0:Remove
-//                          (T==Button    ) -> 1:Press, 0:Release
-//   BBb = Button ID     -> (T==Button)     -> Button ID [see above]
-//   BB  = Reserved      -> (T==Connection) -> Always 00
-//     b = Button Count  -> (T==Connection) -> 1:3-button, 2:6-button
-//
+// The state machine resets after, errr, 1.5ms?  13.5ms?  <shrug>
+// ...this seems to work OK
+#define  RST_MS       (2)
 
-// Connection events
-#define  EV_CONN  ((0x010000))            // Controller system event
-#define  EV_ADD   ((0x001000) | EV_CONN)  // Controller Added
-#define  EV_RMV   ((0x000000) | EV_CONN)  // Controller Removed
-#define  EV_ADD3  ((0x000001) | EV_ADD)   // Controller Added : 3-button
-#define  EV_ADD6  ((0x000002) | EV_ADD)   // Controller Added : 6-button
-
-// Button Events
-#define  EV_BTN   ((0x020000))            // Button Event
-#define  EV_PRS   ((0x001000) | EV_BTN)   // Button Pressed
-#define  EV_REL   ((0x000000) | EV_BTN)   // Button Released
-
-#define  EV_PU    (EV_PRS | BU)           // Press: Up
-#define  EV_PD    (EV_PRS | BD)           // Press: Down
-#define  EV_PL    (EV_PRS | BL)           // Press: Left
-#define  EV_PR    (EV_PRS | BR)           // Press: Right
-#define  EV_PA    (EV_PRS | BA)           // Press: A
-#define  EV_PB    (EV_PRS | BB)           // Press: B
-#define  EV_PC    (EV_PRS | BC)           // Press: C
-#define  EV_PS    (EV_PRS | BS)           // Press: Start
-#define  EV_PX    (EV_PRS | BX)           // Press: X
-#define  EV_PY    (EV_PRS | BY)           // Press: Y
-#define  EV_PZ    (EV_PRS | BZ)           // Press: Z
-#define  EV_PM    (EV_PRS | BM)           // Press: Mode
-
-#define  EV_RU    (EV_REL | BU)           // Release: Up
-#define  EV_RD    (EV_REL | BD)           // Release: Down
-#define  EV_RL    (EV_REL | BL)           // Release: Left
-#define  EV_RR    (EV_REL | BR)           // Release: Right
-#define  EV_RA    (EV_REL | BA)           // Release: A
-#define  EV_RB    (EV_REL | BB)           // Release: B
-#define  EV_RC    (EV_REL | BC)           // Release: C
-#define  EV_RS    (EV_REL | BS)           // Release: Start
-#define  EV_RX    (EV_REL | BX)           // Release: X
-#define  EV_RY    (EV_REL | BY)           // Release: Y
-#define  EV_RZ    (EV_REL | BZ)           // Release: Z
-#define  EV_RM    (EV_REL | BM)           // Release: Mode
+// We need to allow time for logic levels to propagate before taking readings
+// ...this seems to work OK
+#define  PROPAGATE_US (5)
 
 //-------------------------------------------------------------------------------
 // Controller type (detected)
@@ -194,9 +157,9 @@
 typedef
   enum mode {
     M_NONE = 0x00,           // No controller connected
-    M_CONN = 0x01,           // Controller connected, not yet identified
-    M_3BTN = 0x02 | M_CONN,  // Controller idenitified at 6-button
-    M_6BTN = 0x04 | M_CONN,  // Controller idenitified at 6-button
+    M_CONN = 0x80,           // Controller connected, not yet identified
+    M_3BTN = 0x03 | M_CONN,  // Controller idenitified at 6-button
+    M_6BTN = 0x06 | M_CONN,  // Controller idenitified at 6-button
   }
 mode_t;
 
@@ -215,55 +178,12 @@ ctrl_t;
 ctrl_t ctrl[C_CNT];
 
 //-------------------------------------------------------------------------------
-// The state machine resets after, errr, 1.5ms?  13.5ms?  <shrug>
-// ...this seems to work OK
-//
-#define  RST_MS  (2)
-
-//-------------------------------------------------------------------------------
-// The event flag is set when one-or-more events have occurred during a scan
-//
-bool  e_flg;
-
-//-------------------------------------------------------------------------------
 // Variables for the serial console output
 #if (COMPILE == FOR_DEBUG)
-# define  GAP  (3)
-  char      ser_s[((B_CNT + GAP) * C_CNT) + 1];
-  char      ser_b[sizeof(ser_s)];
-  uint16_t  old[C_CNT];
+# define  GAP  (3)                             // Space between data
+  char    ser_s[((B_CNT + GAP) * C_CNT) + 1];  // Friendly-output buffer
+  int     e_flg;                               // An event occurred
 #endif
-
-//-------------------------------------------------------------------------------
-// For controller 'ctl': Query the internal-state of the specified Button
-#define  ISPRS(ctl,btn)   ( (ctrl[ctl].b & (btn)) != 0 )
-#define  ISREL(ctl,btn)   ( !ISPRS(ctl,btn) )
-
-// For controller 'ctl':  Set  the internal-state of the specified Button
-#define  MKPRS(ctl,btn)   ( ctrl[ctl].b |=  (btn))
-#define  MKREL(ctl,btn)   ( ctrl[ctl].b &= ~(btn))
-
-//-------------------------------------------------------------------------------
-// For controller 'ctl': Query the state of the specified DIGITAL db9 pin
-#define  ISLO_D(ctl,pin)  ( digitalRead(ctrl[ctl].p##pin) == LOW )
-#define  ISHI_D(ctl,pin)  ( !ISLO_D(ctl,pin) )
-
-//+==============================================================================
-// For controller 'ctl': Query the state of the specified db9 pin - via the Resistor Network
-//
-#define  ISHI_A(ctl,db9)  ( !ISLO_A(ctl,db9) )
-
-bool  ISLO_A (int ctl,  int db9)
-{
-  int a = analogRead(ctrl[ctl].p69);
-  switch (db9) {
-    case 6:   return ( ((a >= CX_P6_MIN ) && (a <= CX_P6_MAX )) ||
-                       ((a >= CX_P69_MIN) && (a <= CX_P69_MAX))   ) ;
-    case 9:   return ( ((a >= CX_P9_MIN ) && (a <= CX_P9_MAX )) ||
-                       ((a >= CX_P69_MIN) && (a <= CX_P69_MAX))   ) ;
-    default:  return false ;
-  }
-}
 
 //+==============================================================================
 // Configure the ATTiny167 (Digispark Pro)
@@ -278,14 +198,11 @@ void setup (void)
 
     memset(ser_s, ' ', sizeof(ser_s) - 1);
     ser_s[sizeof(ser_s) - 1] = '\0';
+    
     for (int c = 0;  c < C_CNT;  c++) {
-      old[c] = 0xFFFF;
       for (int b = 0;  b < B_CNT;  b++)
         ser_s[(c * (B_CNT + GAP)) + b] = '-';
     }
-
-    memset(ser_b, '\b', sizeof(ser_b) - 1);
-    ser_b[sizeof(ser_b) - 1] = '\0';
 # endif
 
   // -------------------------------------------------------
@@ -293,10 +210,15 @@ void setup (void)
   // ...and define Pin usage
   //
   ctrl[0] = {0x0000, M_NONE, C1_P1, C1_P2, C1_P3, C1_P4, C1_P69};
-  ctrl[1] = {0x0000, M_NONE, C2_P1, C2_P2, C2_P3, C2_P4, C2_P69};
 
-# if (C_CNT > 2)
+# if (C_CNT >= 2)
+    ctrl[1] = {0x0000, M_NONE, C2_P1, C2_P2, C2_P3, C2_P4, C2_P69};
+# endif
+# if (C_CNT >= 3)
     ctrl[2] = {0x0000, M_NONE, C3_P1, C3_P2, C3_P3, C3_P4, C3_P69};
+# endif
+
+# if (C_CNT == 4)
     ctrl[3] = {0x0000, M_NONE, C4_P1, C4_P2, C4_P3, C4_P4, C4_P69};
 # endif
 
@@ -327,7 +249,7 @@ void setup (void)
       DELAY(1000);
     }
     SerialUSB.println("Go!");
-
+/*
     // I've stopped caring why the F() causes strings to not-print
     // ...and why removing it causes a boot-loop
     // I suspect the former is a missing/broken method for accessing flash
@@ -347,70 +269,95 @@ void setup (void)
     SerialUSB.print(F("CX_P69   = "));  SerialUSB.println(CX_P69  , DEC);
     SerialUSB.print(F("DEV      = "));  SerialUSB.println(DEV     , DEC);
     SerialUSB.println();
+*/
 # endif
-
-}
-
-//+============================================================================== 
-void  event (int c,  uint32_t ev)
-{
-  e_flg = true;  // Flag an event (for the caller)
-
-// Sadly this block (of printing) means that it can take >1.5mS between states
-// ...which means you will get quirky results on a 6-Button Controller
-# if 0 // (COMPILE == FOR_DEBUG)
-    interrupts();
-    {
-      SerialUSB.print("\r\nEV: ");
-      SerialUSB.print(c);
-      SerialUSB.print(":");
-      SerialUSB.print(ev, HEX);
-    }
-    noInterrupts();
-# endif
-
-  switch (ev) {
-    case EV_ADD3 :  ctrl[c].mode = M_3BTN;  break;
-    case EV_ADD6 :  ctrl[c].mode = M_6BTN;  break;
-    case EV_RMV  :  ctrl[c].mode = M_NONE;  break;
-
-    case EV_PU   :  MKPRS(c, BU);  break;
-    case EV_PD   :  MKPRS(c, BD);  break;
-    case EV_PL   :  MKPRS(c, BL);  break;
-    case EV_PR   :  MKPRS(c, BR);  break;
-    case EV_PA   :  MKPRS(c, BA);  break;
-    case EV_PB   :  MKPRS(c, BB);  break;
-    case EV_PC   :  MKPRS(c, BC);  break;
-    case EV_PX   :  MKPRS(c, BX);  break;
-    case EV_PY   :  MKPRS(c, BY);  break;
-    case EV_PZ   :  MKPRS(c, BZ);  break;
-    case EV_PS   :  MKPRS(c, BS);  break;
-    case EV_PM   :  MKPRS(c, BM);  break;
-
-    case EV_RU   :  MKREL(c, BU);  break;
-    case EV_RD   :  MKREL(c, BD);  break;
-    case EV_RL   :  MKREL(c, BL);  break;
-    case EV_RR   :  MKREL(c, BR);  break;
-    case EV_RA   :  MKREL(c, BA);  break;
-    case EV_RB   :  MKREL(c, BB);  break;
-    case EV_RC   :  MKREL(c, BC);  break;
-    case EV_RX   :  MKREL(c, BX);  break;
-    case EV_RY   :  MKREL(c, BY);  break;
-    case EV_RZ   :  MKREL(c, BZ);  break;
-    case EV_RS   :  MKREL(c, BS);  break;
-    case EV_RM   :  MKREL(c, BM);  break;
-  }
 }
 
 //+==============================================================================
-void  scan (int c,  int s)
+// For controller 'ctl': Query the state of the specified db9 pin - via the Resistor Network
+//
+#define  ISHI_A(ctl,db9)  ( !ISLO_A(ctl,db9) )
+
+static inline  bool  ISLO_A (int ctl,  int db9)
+{
+  int a = analogRead(ctrl[ctl].p69);
+  switch (db9) {
+    case 6:   return ( ((a >= CX_P6_MIN ) && (a <= CX_P6_MAX )) ||
+                       ((a >= CX_P69_MIN) && (a <= CX_P69_MAX))   ) ;
+    case 9:   return ( ((a >= CX_P9_MIN ) && (a <= CX_P9_MAX )) ||
+                       ((a >= CX_P69_MIN) && (a <= CX_P69_MAX))   ) ;
+    default:  return false ;
+  }
+}
+
+//-------------------------------------------------------------------------------
+// For controller 'ctl': Query the state of the specified DIGITAL db9 pin
+#define  ISLO_D(ctl,pin)  ( digitalRead(ctrl[ctl].p##pin) == LOW )
+#define  ISHI_D(ctl,pin)  ( !ISLO_D(ctl,pin) )
+
+//-------------------------------------------------------------------------------
+// For controller 'ctl': Query the internal-state of the specified Button
+#define  ISPRS(ctl,btn)   ( (ctrl[ctl].b & (btn)) != 0 )
+#define  ISREL(ctl,btn)   ( !ISPRS(ctl,btn) )
+
+//-----------------------------------------------------------------------------
+// Sadly this block (of printing) means that it can take >1.5mS between states
+// ...which means you will get quirky results on a 6-Button Controller
+# if (COMPILE == FOR_DEBUG) && 0
+void  ev_show (int c,  char* s,  int n)
+{
+  SerialUSB.print("\r\nEV: ");
+  SerialUSB.print(c);
+  SerialUSB.print(s);
+  SerialUSB.print(n, HEX);
+}
+
+# else
+#   define  ev_show(...)
+# endif
+
+//+==============================================================================
+static inline  void  event_prs (int c,  int btn)
+{
+  ctrl[c].b |= btn;
+  ev_show(c, "+", btn);
+
+# if (COMPILE == FOR_DEBUG)
+    e_flg = true;
+# endif    
+}
+
+//+==============================================================================
+static inline  void  event_rel (int c,  int btn)
+{
+  ctrl[c].b &= ~btn;
+  ev_show(c, "-", btn);
+
+# if (COMPILE == FOR_DEBUG)
+    e_flg = true;
+# endif    
+}
+
+//+==============================================================================
+static inline  void  event_conn (int c,  mode_t m)
+{
+  ctrl[c].mode = m;
+  ev_show(c, "=", m);
+
+# if (COMPILE == FOR_DEBUG)
+    e_flg = true;
+# endif    
+}
+
+//+==============================================================================
+static inline  void  scan (int c,  int s)
 {
   switch (s) {
     case 0:
       if (ISLO_D(c,3) && ISLO_D(c,4)) {
         if (ctrl[c].mode == M_NONE)  ctrl[c].mode = M_CONN ;
       } else {
-        if (ctrl[c].mode != M_NONE)  event(c, EV_RMV) ;
+        if (ctrl[c].mode != M_NONE)  event_conn(c, M_NONE) ;
       }
       break;
       
@@ -418,50 +365,50 @@ void  scan (int c,  int s)
       if (ctrl[c].mode == M_NONE)  break ;
       
       if (ISLO_D(c,1) && ISLO_D(c,2)) { 
-        if (ctrl[c].mode != M_6BTN)  event(c, EV_ADD6) ;
+        if (ctrl[c].mode != M_6BTN)  event_conn(c, M_6BTN) ;
       } else {
-        if (ctrl[c].mode == M_CONN)  event(c, EV_ADD3) ;
+        if (ctrl[c].mode == M_CONN)  event_conn(c, M_3BTN) ;
       }
       break;
 
     case 2:
       if ((ctrl[c].mode != M_3BTN) && (ctrl[c].mode != M_6BTN))  break ;
       
-      if (ISLO_A(c,6))  {  if (ISREL(c,BA))  event(c, EV_PRS | BA) ;  }  // A
-      else              {  if (ISPRS(c,BA))  event(c, EV_REL | BA) ;  }
-      if (ISLO_A(c,9))  {  if (ISREL(c,BS))  event(c, EV_PRS | BS) ;  }  // Start
-      else              {  if (ISPRS(c,BS))  event(c, EV_REL | BS) ;  }
+      if (ISLO_A(c,6))  {  if (ISREL(c,BA))  event_prs(c, BA) ;  }  // A
+      else              {  if (ISPRS(c,BA))  event_rel(c, BA) ;  }
+      if (ISLO_A(c,9))  {  if (ISREL(c,BS))  event_prs(c, BS) ;  }  // Start
+      else              {  if (ISPRS(c,BS))  event_rel(c, BS) ;  }
       break;
 
     case 3:
       if ((ctrl[c].mode != M_3BTN) && (ctrl[c].mode != M_6BTN))  break ;
       
-      if (ISLO_D(c,1))  {  if (ISREL(c,BU))  event(c, EV_PRS | BU) ;  }  // Up
-      else              {  if (ISPRS(c,BU))  event(c, EV_REL | BU) ;  }
-      if (ISLO_D(c,2))  {  if (ISREL(c,BD))  event(c, EV_PRS | BD) ;  }  // Down
-      else              {  if (ISPRS(c,BD))  event(c, EV_REL | BD) ;  }
-      if (ISLO_D(c,3))  {  if (ISREL(c,BL))  event(c, EV_PRS | BL) ;  }  // Left
-      else              {  if (ISPRS(c,BL))  event(c, EV_REL | BL) ;  }
-      if (ISLO_D(c,4))  {  if (ISREL(c,BR))  event(c, EV_PRS | BR) ;  }  // Right
-      else              {  if (ISPRS(c,BR))  event(c, EV_REL | BR) ;  }
+      if (ISLO_D(c,1))  {  if (ISREL(c,BU))  event_prs(c, BU) ;  }  // Up
+      else              {  if (ISPRS(c,BU))  event_rel(c, BU) ;  }
+      if (ISLO_D(c,2))  {  if (ISREL(c,BD))  event_prs(c, BD) ;  }  // Down
+      else              {  if (ISPRS(c,BD))  event_rel(c, BD) ;  }
+      if (ISLO_D(c,3))  {  if (ISREL(c,BL))  event_prs(c, BL) ;  }  // Left
+      else              {  if (ISPRS(c,BL))  event_rel(c, BL) ;  }
+      if (ISLO_D(c,4))  {  if (ISREL(c,BR))  event_prs(c, BR) ;  }  // Right
+      else              {  if (ISPRS(c,BR))  event_rel(c, BR) ;  }
       
-      if (ISLO_A(c,6))  {  if (ISREL(c,BB))  event(c, EV_PRS | BB) ;  }  // B
-      else              {  if (ISPRS(c,BB))  event(c, EV_REL | BB) ;  }
-      if (ISLO_A(c,9))  {  if (ISREL(c,BC))  event(c, EV_PRS | BC) ;  }  // C
-      else              {  if (ISPRS(c,BC))  event(c, EV_REL | BC) ;  }
+      if (ISLO_A(c,6))  {  if (ISREL(c,BB))  event_prs(c, BB) ;  }  // B
+      else              {  if (ISPRS(c,BB))  event_rel(c, BB) ;  }
+      if (ISLO_A(c,9))  {  if (ISREL(c,BC))  event_prs(c, BC) ;  }  // C
+      else              {  if (ISPRS(c,BC))  event_rel(c, BC) ;  }
       break;
 
     case 5:
       if (ctrl[c].mode != M_6BTN)  break ;
       
-      if (ISLO_D(c,1))  {  if (ISREL(c,BZ))  event(c, EV_PRS | BZ) ;  }  // Z
-      else              {  if (ISPRS(c,BZ))  event(c, EV_REL | BZ) ;  }
-      if (ISLO_D(c,2))  {  if (ISREL(c,BY))  event(c, EV_PRS | BY) ;  }  // Y
-      else              {  if (ISPRS(c,BY))  event(c, EV_REL | BY) ;  }
-      if (ISLO_D(c,3))  {  if (ISREL(c,BX))  event(c, EV_PRS | BX) ;  }  // X
-      else              {  if (ISPRS(c,BX))  event(c, EV_REL | BX) ;  }
-      if (ISLO_D(c,4))  {  if (ISREL(c,BM))  event(c, EV_PRS | BM) ;  }  // Mode
-      else              {  if (ISPRS(c,BM))  event(c, EV_REL | BM) ;  }
+      if (ISLO_D(c,1))  {  if (ISREL(c,BZ))  event_prs(c, BZ) ;  }  // Z
+      else              {  if (ISPRS(c,BZ))  event_rel(c, BZ) ;  }
+      if (ISLO_D(c,2))  {  if (ISREL(c,BY))  event_prs(c, BY) ;  }  // Y
+      else              {  if (ISPRS(c,BY))  event_rel(c, BY) ;  }
+      if (ISLO_D(c,3))  {  if (ISREL(c,BX))  event_prs(c, BX) ;  }  // X
+      else              {  if (ISPRS(c,BX))  event_rel(c, BX) ;  }
+      if (ISLO_D(c,4))  {  if (ISREL(c,BM))  event_prs(c, BM) ;  }  // Mode
+      else              {  if (ISPRS(c,BM))  event_rel(c, BM) ;  }
       break;
 
     default:
@@ -472,9 +419,11 @@ void  scan (int c,  int s)
 //+==============================================================================
 void loop (void)
 {
-# if (COMPILE == FOR_DEBUG)
-    for (int c = 0;  c < C_CNT;  c++)  old[c] = ctrl[c].b ;
-# endif
+  // -------------------------------------------------------
+  // Note current button state (will be "old" after scan)
+  uint16_t  old[C_CNT];
+  
+  for (int c = 0;  c < C_CNT;  c++)  old[c] = ctrl[c].b ;
 
   // -------------------------------------------------------
   // Force/allow/wait-for the controllers to reset to State-0
@@ -488,21 +437,26 @@ void loop (void)
   //   # Send button press/release events
   //   # Track connect/button state (internally)
   //
+  // This chunk of code is timing critical for the 6-Button Controller
+  // ...so we disable interrupts for the duration of the scan
   noInterrupts();
   {
-    e_flg = false;                                     // Clear the event flag
-    for (int s = 0;  s < 8;  s++) {                    // Go through all 8 possible states
-      digitalWrite(C_CLK, (s & 1) ? HIGH : LOW);       // Toggle the clk
-      delayMicroseconds(1);                            // Allow for propogation (at both ends)
+    // We do not support third-party controllers (yet), 
+    // ...so we can eschew State-6 & State-7 
+    // ...to minimise the amount of time for which interrupts are diabled
+    // ...probably overkill, but good coding practice
+    for (int s = 0;  s <= 5;  s++) {
+      digitalWrite(C_CLK, (s & 1) ? HIGH : LOW);       // Set the clk
+      delayMicroseconds(PROPAGATE_US);                 // Allow for propogation (at both ends)
       for (int c = 0;  c < C_CNT;  c++)  scan(c, s) ;  // Scan the controllers
     }
   }
   interrupts();
 
 # if (COMPILE == FOR_MD)
-    if (e_flg)
-      for (int c = 0;  c < C_CNT;  c++)
-        Mega2USB.setButtons(c, ctrl[c].b);
+    for (int c = 0;  c < C_CNT;  c++)
+      Mega2USB.setButtons(c, ctrl[c].b) ;
+
 
 # elif (COMPILE == FOR_DEBUG)
   // Serial output takes "forever" on the whole scheme of things
@@ -532,14 +486,13 @@ void loop (void)
 
     if (e_flg)  SerialUSB.println() ;
     SerialUSB.print(ser_s);
-      SerialUSB.print(": ");
-      SerialUSB.print( (ctrl[0].mode == M_6BTN) ? "6" :
-                      ((ctrl[0].mode == M_3BTN) ? "3" : "-"));
-      SerialUSB.print( (ctrl[1].mode == M_6BTN) ? "/6" :
-                      ((ctrl[1].mode == M_3BTN) ? "/3" : "/-"));
-//      SerialUSB.print("\b\b\b\b\b");
-//    SerialUSB.print(ser_b);
+    SerialUSB.print(": ");
+    SerialUSB.print( (ctrl[0].mode == M_6BTN) ? "6" :
+                    ((ctrl[0].mode == M_3BTN) ? "3" : "-"));
+    SerialUSB.print( (ctrl[1].mode == M_6BTN) ? "/6" :
+                    ((ctrl[1].mode == M_3BTN) ? "/3" : "/-"));
     SerialUSB.print("\r");
+    e_flg = false;
   }
 # endif
 
