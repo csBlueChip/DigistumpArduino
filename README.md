@@ -1,4 +1,4 @@
-# Connect 2 Sega Mega-Drive/Genesis controllers to a PC via USB 
+# Connect Sega Mega-Drive/Genesis controllers to a PC via USB 
 
 HID mode, so you will NOT need any special device drivers ...They will simply show up as a couple of HID Joysticks
 
@@ -22,6 +22,8 @@ The following is a couple of the README files from the library ...If you don't c
 Just scroll to the end to see the wiriing diagram ...AKA. "Sonic is waiting ...What do I glue to what to make this work?"
 
 If you already have Arduino IDE installed, you own a soldering iron, and have a box of random resisitors laying about ...you should be gaming in a hour-or-two :)
+
+If you already have some other version of the "digistump" library installed (very likely) ...just copy the MegaUSB/ directory and drop it in your existing digispark directory: https://github.com/csBlueChip/Mega2USB/tree/master/digistump-avr/libraries/MegaUSB
 
 If you can program, and want to tweak the code for 4 controllers - probably best put aside a day for the job.
 
