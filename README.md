@@ -16,7 +16,7 @@ The following is a couple of the README files from the library ...If you don't c
 * how it reads the controllers
 * or how it talks like a joystick to the USB port
 * why the decision was made to support only 2 controllers
-* why did I chose a basic resistor network to multiplex buttons
+* why I chose a basic resistor network to multiplex buttons
 * how to modify the code to support 4 controllers
 
 Just scroll to the end to see the wiriing diagram ...AKA. "Sonic is waiting ...What do I glue to what to make this work?"
